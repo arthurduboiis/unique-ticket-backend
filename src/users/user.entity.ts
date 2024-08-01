@@ -2,14 +2,14 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Company } from '../companies/company.entity';
+import { Ticket } from '../tickets/ticket.entity';
 
-@Entity('crm_users')
-export class CrmUser {
+@Entity('users')
+export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,29 +25,23 @@ export class CrmUser {
   @Column({ unique: true })
   email: string;
 
-  @ManyToOne(() => Company, company => company.members)
-  company: Company;
-
-  @Column({ nullable: true })
-  profilePictureUrl: string;
-
-  @Column({ nullable: true })
-  profilePictureName: string;
-
-  @Column({ nullable: true })
-  companyId: number;
-
-  @Column({ nullable: true })
-  role: string;
-
-  @Column({ nullable: true })
-  accessLevel: string;
-
-  @Column('jsonb', { nullable: true })
-  permissions: string[];
-
   @Column({ nullable: true })
   newsletter: boolean;
+
+  @Column({ nullable: true })
+  region: string;
+
+  @Column({ nullable: true })
+  gender: string;
+
+  @Column({ nullable: true })
+  birthdate: string;
+
+  @Column({ nullable: true })
+  wallet_address: string;
+
+  @OneToMany(() => Ticket, ticket => ticket.user)
+  tickets: Ticket[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;

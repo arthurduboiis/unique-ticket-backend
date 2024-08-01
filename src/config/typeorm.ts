@@ -1,8 +1,8 @@
-import { registerAs } from '@nestjs/config'
-import { config as dotenvConfig } from 'dotenv'
-import { DataSource, DataSourceOptions } from 'typeorm'
+import { registerAs } from '@nestjs/config';
+import { config as dotenvConfig } from 'dotenv';
+import { DataSource, DataSourceOptions } from 'typeorm';
 
-dotenvConfig({ path: '.env' })
+dotenvConfig({ path: '.env' });
 
 const config = {
   type: 'postgres',
@@ -19,7 +19,7 @@ const config = {
   migrationsTableName: 'migrations_typeorm',
   autoLoadEntities: true,
   synchronize: false,
-}
-console.log(config)
-export default registerAs('typeorm', () => config)
-export const connectionSource = new DataSource(config as DataSourceOptions)
+};
+console.log(config);
+export default registerAs('typeorm', () => config);
+export const connectionSource = new DataSource(config as DataSourceOptions);
