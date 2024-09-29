@@ -1,58 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Ticket } from './ticket.entity';
-import { Event } from '../events/event.entity';
-import { User } from '../users/user.entity';
+import { CreateTicketDto } from './dto/create-ticket.dto';
+import { UpdateTicketDto } from './dto/update-ticket.dto';
+
 @Injectable()
 export class TicketsService {
-  constructor(
-    @InjectRepository(Ticket)
-    private readonly ticketRepository: Repository<Ticket>,
-    @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>,
-    @InjectRepository(User)
-    private readonly crmUserRepository: Repository<User>
-  ) {}
-
-  findAll(): Promise<Ticket[]> {
-    return this.ticketRepository.find();
+  create(createTicketDto: CreateTicketDto) {
+    return 'This action adds a new ticket';
   }
 
-  findOne(id: number): Promise<Ticket> {
-    return this.ticketRepository.findOneBy({ id });
+  findAll() {
+    return `This action returns all tickets`;
   }
 
-  async create(ticket: Ticket): Promise<Ticket> {
-    const event = await this.eventRepository.findOneBy({ id: ticket.event.id });
-    const user = await this.crmUserRepository.findOneBy({ id: ticket.user.id });
-
-    if (event && user) {
-      ticket.event = event;
-      ticket.user = user;
-      return this.ticketRepository.save(ticket);
-    }
-
-    throw new Error('Event or User not found');
+  findOne(id: number) {
+    return `This action returns a #${id} ticket`;
   }
 
-  async remove(id: number): Promise<void> {
-    await this.ticketRepository.delete(id);
+  update(id: number, updateTicketDto: UpdateTicketDto) {
+    return `This action updates a #${id} ticket`;
   }
 
-  async findByEventId(eventId: number): Promise<Ticket[]> {
-    return this.ticketRepository.find({
-      where: {
-        event: { id: eventId },
-      },
-    });
-  }
-
-  async findByUserId(userId: number): Promise<Ticket[]> {
-    return this.ticketRepository.find({
-      where: {
-        user: { id: userId },
-      },
-    });
+  remove(id: number) {
+    return `This action removes a #${id} ticket`;
   }
 }

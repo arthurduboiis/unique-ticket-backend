@@ -1,37 +1,34 @@
-import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { EventsService } from './events.service';
-import { Event } from './event.entity';
-import { TicketCategory } from './ticket-category.entity';
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
+  @Post()
+  create(@Body() createEventDto: CreateEventDto) {
+    return this.eventsService.create(createEventDto);
+  }
+
   @Get()
-  findAll(): Promise<Event[]> {
+  findAll() {
     return this.eventsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<Event> {
-    return this.eventsService.findOne(id);
+  findOne(@Param('id') id: string) {
+    return this.eventsService.findOne(+id);
   }
 
-  @Post()
-  create(@Body() event: Event): Promise<Event> {
-    return this.eventsService.create(event);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
+    return this.eventsService.update(+id, updateEventDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
-    return this.eventsService.remove(id);
-  }
-
-  @Post(':id/ticket-categories')
-  createTicketCategory(
-    @Param('id') id: number,
-    @Body() ticketCategory: TicketCategory
-  ): Promise<TicketCategory> {
-    return this.eventsService.createTicketCategory(id, ticketCategory);
+  remove(@Param('id') id: string) {
+    return this.eventsService.remove(+id);
   }
 }

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
-import { Event } from '../events/event.entity';
-import { CrmUser } from '../crm-users/crm-user.entity';
+import { Event } from '../../events/entities/event.entity';
+import { CrmUser } from '../../crm_users/entities/crm_user.entity';
 
 @Entity('companies')
 export class Company {

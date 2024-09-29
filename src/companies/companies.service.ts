@@ -1,50 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Company } from './company.entity';
-import { Event } from '../events/event.entity';
-import { CrmUser } from '../crm-users/crm-user.entity';
+import { CreateCompanyDto } from './dto/create-company.dto';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 @Injectable()
 export class CompaniesService {
-  constructor(
-    @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
-    @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>,
-    @InjectRepository(CrmUser)
-    private readonly crmUserRepository: Repository<CrmUser>
-  ) {}
-
-  findAll(): Promise<Company[]> {
-    return this.companyRepository.find();
+  create(createCompanyDto: CreateCompanyDto) {
+    return 'This action adds a new company';
   }
 
-  findOne(id: number): Promise<Company> {
-    return this.companyRepository.findOneBy({ id });
+  findAll() {
+    return `This action returns all companies`;
   }
 
-  async create(company: Company): Promise<Company> {
-    return this.companyRepository.save(company);
+  findOne(id: number) {
+    return `This action returns a #${id} company`;
   }
 
-  async remove(id: number): Promise<void> {
-    await this.companyRepository.delete(id);
+  update(id: number, updateCompanyDto: UpdateCompanyDto) {
+    return `This action updates a #${id} company`;
   }
 
-  async findEventsByCompanyId(companyId: number): Promise<Event[]> {
-    return this.eventRepository.find({
-      where: {
-        company: { id: companyId },
-      },
-    });
-  }
-
-  async findMembersByCompanyId(companyId: number): Promise<CrmUser[]> {
-    return this.crmUserRepository.find({
-      where: {
-        company: { id: companyId },
-      },
-    });
+  remove(id: number) {
+    return `This action removes a #${id} company`;
   }
 }

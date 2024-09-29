@@ -1,38 +1,34 @@
-import { Controller, Get, Post, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
-import { Ticket } from './ticket.entity';
+import { CreateTicketDto } from './dto/create-ticket.dto';
+import { UpdateTicketDto } from './dto/update-ticket.dto';
 
 @Controller('tickets')
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
+  @Post()
+  create(@Body() createTicketDto: CreateTicketDto) {
+    return this.ticketsService.create(createTicketDto);
+  }
+
   @Get()
-  findAll(): Promise<Ticket[]> {
+  findAll() {
     return this.ticketsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): Promise<Ticket> {
-    return this.ticketsService.findOne(id);
+  findOne(@Param('id') id: string) {
+    return this.ticketsService.findOne(+id);
   }
 
-  @Post()
-  create(@Body() ticket: Ticket): Promise<Ticket> {
-    return this.ticketsService.create(ticket);
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
+    return this.ticketsService.update(+id, updateTicketDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number): Promise<void> {
-    return this.ticketsService.remove(id);
-  }
-
-  @Get('event/:eventId')
-  findByEventId(@Param('eventId') eventId: number): Promise<Ticket[]> {
-    return this.ticketsService.findByEventId(eventId);
-  }
-
-  @Get('user/:userId')
-  findByUserId(@Param('userId') userId: number): Promise<Ticket[]> {
-    return this.ticketsService.findByUserId(userId);
+  remove(@Param('id') id: string) {
+    return this.ticketsService.remove(+id);
   }
 }

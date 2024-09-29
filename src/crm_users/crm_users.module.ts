@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
+import { CrmUsersService } from './crm_users.service';
+import { CrmUsersController } from './crm_users.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CrmUsersService } from './crm-users.service';
-import { CrmUsersController } from './crm-users.controller';
-import { CrmUser } from './crm-user.entity';
+import { CrmUser } from './entities/crm_user.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CrmUser])],
-  providers: [CrmUsersService],
   controllers: [CrmUsersController],
+  providers: [CrmUsersService],
 })
 export class CrmUsersModule {}

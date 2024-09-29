@@ -3,12 +3,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CrmUsersModule } from './crm-users/crm-users.module'; // Assurez-vous que le chemin est correct
 import typeorm from './config/typeorm';
 import { UsersModule } from './users/users.module';
-import { EventsModule } from './events/events.module';
-import { CompaniesModule } from './companies/companies.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { CompaniesModule } from './companies/companies.module';
+import { ReportsModule } from './reports/reports.module';
+import { CrmUsersModule } from './crm_users/crm_users.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { TicketsModule } from './tickets/tickets.module';
     UsersModule,
     EventsModule,
     CompaniesModule,
-    TicketsModule
+    TicketsModule,
+    ReportsModule
   ],
   controllers: [AppController],
   providers: [AppService],

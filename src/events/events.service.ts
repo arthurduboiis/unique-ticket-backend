@@ -1,40 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Event } from './event.entity';
-import { TicketCategory } from './ticket-category.entity';
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 
 @Injectable()
 export class EventsService {
-  constructor(
-    @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>,
-    @InjectRepository(TicketCategory)
-    private readonly ticketCategoryRepository: Repository<TicketCategory>
-  ) {}
-
-  findAll(): Promise<Event[]> {
-    return this.eventRepository.find();
+  create(createEventDto: CreateEventDto) {
+    return 'This action adds a new event';
   }
 
-  findOne(id: number): Promise<Event> {
-    return this.eventRepository.findOneBy({ id });
+  findAll() {
+    return `This action returns all events`;
   }
 
-  create(event: Event): Promise<Event> {
-    return this.eventRepository.save(event);
+  findOne(id: number) {
+    return `This action returns a #${id} event`;
   }
 
-  async remove(id: number): Promise<void> {
-    await this.eventRepository.delete(id);
+  update(id: number, updateEventDto: UpdateEventDto) {
+    return `This action updates a #${id} event`;
   }
 
-  async createTicketCategory(
-    eventId: number,
-    ticketCategory: TicketCategory
-  ): Promise<TicketCategory> {
-    const event = await this.eventRepository.findOneBy({ id: eventId });
-    ticketCategory.event = event;
-    return this.ticketCategoryRepository.save(ticketCategory);
+  remove(id: number) {
+    return `This action removes a #${id} event`;
   }
 }
