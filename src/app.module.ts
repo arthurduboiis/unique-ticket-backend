@@ -10,6 +10,7 @@ import { CompaniesModule } from './companies/companies.module';
 import { ReportsModule } from './reports/reports.module';
 import { CrmUsersModule } from './crm_users/crm_users.module';
 import { EventsModule } from './events/events.module';
+import { UserCompanyFollowingModule } from './user-company-following/user-company-following.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { EventsModule } from './events/events.module';
     EventsModule,
     CompaniesModule,
     TicketsModule,
-    ReportsModule
+    ReportsModule,
+    UserCompanyFollowingModule
   ],
   controllers: [AppController],
   providers: [AppService],

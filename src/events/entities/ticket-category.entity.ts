@@ -9,7 +9,7 @@ export class TicketCategory {
   @Column()
   categoryName: string;
 
-  @Column()
+  @Column({nullable: true})
   categoryDescription: string;
 
   @Column('decimal')
@@ -23,6 +23,9 @@ export class TicketCategory {
 
   @Column()
   ticketsScanned: number;
+
+  @Column()
+  availabilityDateTickets: Date;
 
   @ManyToOne(() => Event, (event) => event.ticketCategories)
   event: Event;

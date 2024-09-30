@@ -16,11 +16,14 @@ import {
     @PrimaryGeneratedColumn()
     id: number;
   
-    @Column()
-    artist: string;
+    @Column('simple-array',{nullable: true})
+    artist: string[];
   
     @Column()
     title: string;
+
+    @Column()
+    description: string;
   
     @Column()
     capacity: number;
@@ -30,9 +33,21 @@ import {
   
     @Column()
     contractAddress: string;
+
+    @Column({nullable: true})
+    coOrganizer: string;
+
+    @Column()
+    likes: number;
+
+    @Column({nullable: true})
+    mood: string;
   
     @Column()
-    date: Date;
+    startDate: Date;
+
+    @Column()
+    endDate: Date;
   
     @Column()
     eventType: string;
@@ -41,7 +56,7 @@ import {
     image: string;
   
     @Column()
-    salle: string;
+    place: string;
   
     @Column('decimal')
     startingPrice: number;
