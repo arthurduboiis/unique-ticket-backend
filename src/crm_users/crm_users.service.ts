@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateCrmUserDto } from './dto/create-crm_user.dto';
 import { UpdateCrmUserDto } from './dto/update-crm_user.dto';
+import { CrmUser } from './entities/crm_user.entity';
 
 @Injectable()
 export class CrmUsersService {
-  create(createCrmUserDto: CreateCrmUserDto) {
-    return 'This action adds a new crmUser';
+  constructor(
+    @InjectRepository(CrmUser)
+    private readonly crmUsersRepository: Repository<CrmUser>,
+  ) {}
+
+  async create(createCrmUserDto: CreateCrmUserDto): Promise<CrmUser> {
+    const newUser = this.crmUsersRepository.create(createCrmUserDto);
+    const savedUser = await this.crmUsersRepository.save(newUser);
+    return savedUser;
   }
 
-  findAll() {
-    return `This action returns all crmUsers`;
+  async findAll(): Promise<CrmUser[]> {
+    return await this.crmUsersRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} crmUser`;
+  async findOne(id: number): Promise<CrmUser> {
+    const user = await this.crmUsersRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new NotFoundException(`CrmUser with ID ${id} not found`);
+    }
+    return user;
   }
 
-  update(id: number, updateCrmUserDto: UpdateCrmUserDto) {
-    return `This action updates a #${id} crmUser`;
+  async update(id: number, updateCrmUserDto: UpdateCrmUserDto): Promise<CrmUser> {
+    const user = await this.findOne(id); // Will throw NotFoundException if not found
+    Object.assign(user, updateCrmUserDto);
+    return await this.crmUsersRepository.save(user);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} crmUser`;
+  async remove(id: number): Promise<void> {
+    const result = await this.crmUsersRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`CrmUser with ID ${id} not found`);
+    }
   }
 }
