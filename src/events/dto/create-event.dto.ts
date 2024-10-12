@@ -84,10 +84,6 @@ export class CreateEventDto {
   @IsOptional()
   coOrganizer?: string;
 
-  @IsNumber()
-  @IsOptional()
-  likes?: number;
-
   @IsString()
   @IsOptional()
   mood?: string;
