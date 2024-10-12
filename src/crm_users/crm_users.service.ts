@@ -36,10 +36,12 @@ export class CrmUsersService {
     return await this.crmUsersRepository.save(user);
   }
 
-  async remove(id: number): Promise<void> {
-    const result = await this.crmUsersRepository.delete(id);
-    if (result.affected === 0) {
+  async remove(id: number): Promise<CrmUser> {
+    const user = await this.crmUsersRepository.findOne({ where: { id } });
+    if (!user) {
       throw new NotFoundException(`CrmUser with ID ${id} not found`);
     }
+    await this.crmUsersRepository.delete(id);
+    return user;
   }
 }
