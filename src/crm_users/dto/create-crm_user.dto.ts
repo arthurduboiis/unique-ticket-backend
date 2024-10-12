@@ -27,7 +27,7 @@ export class ProfilePictureDto {
   @IsUrl({}, { message: 'URL de l’image invalide.' })
   url: string;
 }
-// Regex pour le format du mot de passe (si nécessaire dans le futur)
+
 const passwordRegEx =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
 
@@ -41,7 +41,7 @@ export class CreateCrmUserDto {
   @IsOptional()
   lastname?: string;
 
-  @IsPhoneNumber('FR', { message: 'Numéro de téléphone invalide.' }) // Remplacer 'FR' par le code du pays adapté si nécessaire
+  @IsPhoneNumber('FR', { message: 'Numéro de téléphone invalide.' })
   @IsOptional()
   phoneNumber?: string;
 
@@ -49,9 +49,9 @@ export class CreateCrmUserDto {
   @IsNotEmpty({ message: 'Email est obligatoire.' })
   email: string;
 
-  @ValidateNested() // Pour valider les objets imbriqués
-  @Type(() => ProfilePictureDto) // Transformer correctement l'objet JSON
-  @IsOptional() // Profile picture peut être optionnelle
+  @ValidateNested()
+  @Type(() => ProfilePictureDto)
+  @IsOptional()
   profilePicture?: ProfilePictureDto;
 
   @IsNumber(
