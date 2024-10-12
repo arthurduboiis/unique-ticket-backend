@@ -31,7 +31,7 @@ export class EventsService {
   }
 
   async update(id: number, updateEventDto: UpdateEventDto): Promise<Event> {
-    const event = await this.findOne(id); // Will throw NotFoundException if not found
+    const event = await this.findOne(id);
     Object.assign(event, updateEventDto);
     return await this.eventRepository.save(event);
   }
