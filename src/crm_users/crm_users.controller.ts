@@ -12,11 +12,6 @@ export class CrmUsersController {
     return this.crmUsersService.create(createCrmUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.crmUsersService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.crmUsersService.findOne(+id);
