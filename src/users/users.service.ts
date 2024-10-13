@@ -13,68 +13,58 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
 
     @InjectRepository(Event)
-    private readonly eventRepository: Repository<Event>,
+    private readonly eventRepository: Repository<Event>
   ) {}
 
   // Créer un utilisateur
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const { likedEvents, ...userData } = createUserDto;
-
-    // Charger les événements si des IDs sont fournis
-    let events: Event[] = [];
-    if (likedEvents && likedEvents.length > 0) {
-      events = await this.eventRepository.findBy({ id: In(likedEvents) });
-    }
-
-    // Créer l'utilisateur avec les événements aimés
+    const { ...userData } = createUserDto;
     const user = this.userRepository.create({
       ...userData,
-      likedEvents: events,
     });
 
     // Sauvegarder l'utilisateur dans la base de données
     return this.userRepository.save(user);
   }
 
-  // Récupérer tous les utilisateurs
-  async findAll(): Promise<User[]> {
-    
-    return this.userRepository.find(); // Charger les relations si nécessaire
-  }
-
   // Récupérer un utilisateur par son ID
   async findOne(id: number): Promise<User> {
     return this.userRepository.findOne({
       where: { id },
-      relations: ['likedEvents', 'following'], // Charger les relations si nécessaire
+      relations: ['liked', 'following'],
     });
   }
 
   // Mettre à jour un utilisateur
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    const { likedEvents, ...userData } = updateUserDto;
-
-    // Charger les événements si des IDs sont fournis
-    let events: Event[] = [];
-    if (likedEvents && likedEvents.length > 0) {
-      events = await this.eventRepository.findBy({ id: In(likedEvents) });
-    }
-
-    // Mise à jour des données utilisateur
-    await this.userRepository.update(id, {
-      ...userData,
-      likedEvents: events,
-    });
-
-    // Récupérer et retourner l'utilisateur mis à jour
-    return this.userRepository.findOne({
+    // Charger l'utilisateur existant
+    const user = await this.userRepository.findOne({
       where: { id },
-      relations: ['likedEvents', 'following'],
+      relations: ['liked', 'following'], // Charger les relations existantes
     });
+  
+    if (!user) {
+      throw new Error('User not found'); // Gérer le cas où l'utilisateur n'existe pas
+    }
+  
+    // Si des événements liked sont fournis, charger les événements à partir des IDs
+    if (updateUserDto.liked && updateUserDto.liked.length > 0) {
+      const likedEvents = await this.eventRepository.findBy({
+        id: In(updateUserDto.liked), // Charger les événements par leurs IDs
+      });
+      user.liked = likedEvents; // Assigner les nouveaux événements aimés
+    }
+  
+    // Mettre à jour d'autres champs de l'utilisateur
+    Object.assign(user, updateUserDto);
+  
+    // Sauvegarder l'utilisateur avec les nouvelles relations
+    return this.userRepository.save(user); // Utiliser save pour mettre à jour les relations et les autres champs
   }
 
   // Supprimer un utilisateur par son ID
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<string> {
     await this.userRepository.delete(id);
+    return "L'utilisateur a été supprimé avec succès.";
   }
 }

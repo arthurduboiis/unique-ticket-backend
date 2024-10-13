@@ -12,13 +12,6 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
-
-  // Récupérer tous les utilisateurs
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
-
   // Récupérer un utilisateur par son ID
   @Get(':id')
   findOne(@Param('id') id: string) {

@@ -12,6 +12,7 @@ import { Ticket } from '../../tickets/entities/ticket.entity';
 import { Company } from '../../companies/entities/company.entity';
 import { Event } from '../../events/entities/event.entity';
 import { UserCompanyFollowing } from '../../user-company-following/entities/user-company-following.entity';
+import { UserLikedEvent } from '../../user-liked-events/entities/user-liked-event.entity';
 class Following {
   company: Company;
   notificationsEnabled: boolean;
@@ -52,8 +53,8 @@ export class User {
   @OneToMany(() => Ticket, (ticket) => ticket.user)
   tickets: Ticket[];
 
-  @ManyToMany(() => Event)
-  likedEvents: Event[];
+  @OneToMany(() => UserLikedEvent, (userLikedEvent) => userLikedEvent.user)
+  liked: Event[];
 
   @OneToMany(() => UserCompanyFollowing, (following) => following.user)
   following: UserCompanyFollowing[];
