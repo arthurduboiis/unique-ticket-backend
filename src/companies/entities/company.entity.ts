@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Event } from '../../events/entities/event.entity';
-import { CrmUser } from '../../crm_users/entities/crm_user.entity';
 import { Report } from '../../reports/entities/report.entity';
 import { UserCompanyFollowing } from '../../user-company-following/entities/user-company-following.entity';
+import { CrmUsersMemberOfCompany } from '../../crm-users-member-of-companies/entities/crm-users-member-of-company.entity';
 
 @Entity('companies')
 export class Company {
@@ -30,8 +30,8 @@ export class Company {
   @OneToMany(() => Event, (event) => event.company)
   events: Event[];
 
-  @OneToMany(() => CrmUser, (crmUser) => crmUser.company)
-  members: CrmUser[];
+  @OneToMany(() => CrmUsersMemberOfCompany, (memberOf) => memberOf.company)
+  members: CrmUsersMemberOfCompany[];
 
   @OneToMany(() => UserCompanyFollowing, (following) => following.company)
   followers: UserCompanyFollowing[];

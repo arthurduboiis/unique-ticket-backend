@@ -2,13 +2,10 @@ import {
   IsString,
   IsNotEmpty,
   IsJSON,
-  IsArray,
-  ValidateNested,
   IsOptional,
+  IsNumber,
   IsUUID,
 } from 'class-validator';
-import { Type } from 'class-transformer';
-import { CrmUser } from '../../crm_users/entities/crm_user.entity';
 
 export class CreateCompanyDto {
   @IsString()
@@ -33,4 +30,7 @@ export class CreateCompanyDto {
   @IsOptional()
   stripeAccountId: string;
 
+  @IsUUID()
+  @IsOptional()
+  creatorId: number;
 }

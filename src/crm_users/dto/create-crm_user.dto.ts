@@ -58,28 +58,10 @@ export class CreateCrmUserDto {
     {},
     { message: 'L’identifiant de l’entreprise doit être un nombre.' }
   )
-  @IsOptional()
-  companyId?: number;
 
   @IsString()
   @IsOptional()
   role?: string;
-
-  @IsEnum(AccessLevel, {
-    message: 'Le niveau d’accès doit être full, limited ou none.',
-  })
-  @IsOptional()
-  accessLevel?: AccessLevel;
-
-  @IsArray({
-    message: 'Les permissions doivent être une liste de chaînes de caractères.',
-  })
-  @IsString({
-    each: true,
-    message: 'Chaque permission doit être une chaîne de caractères.',
-  })
-  @IsOptional()
-  permissions?: string[];
 
   @IsBoolean({ message: 'La newsletter doit être un booléen (true ou false).' })
   @IsOptional()
