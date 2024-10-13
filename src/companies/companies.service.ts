@@ -5,6 +5,7 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
 import { CrmUser } from 'src/crm_users/entities/crm_user.entity';
+import { CrmUsersMemberOfCompany } from 'src/crm-users-member-of-companies/entities/crm-users-member-of-company.entity';
 
 @Injectable()
 export class CompaniesService {
@@ -13,21 +14,38 @@ export class CompaniesService {
     private readonly companyRepository: Repository<Company>,
     @InjectRepository(CrmUser)
     private readonly crmUserRepository: Repository<CrmUser>,
+    @InjectRepository(CrmUsersMemberOfCompany)
+    private readonly crmUsersMemberOfCompanyRepository: Repository<CrmUsersMemberOfCompany>,
   ) {}
 
-  async create(createCompanyDto: CreateCompanyDto, creatorId: number): Promise<Company> {
-    const creator = await this.crmUserRepository.findOne({ where: { id: creatorId } });
+  async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
+    const { creatorId, ...companyData } = createCompanyDto;
 
-    if (!creator) {
-      throw new Error('Creator user not found'); 
-    }
-
-    const company = this.companyRepository.create({
-      ...createCompanyDto,
-      members: [creator], 
+    // Charger le membre créateur
+    const creator = await this.crmUserRepository.findOne({
+      where: { id: creatorId },
     });
 
-    return this.companyRepository.save(company);
+    if (!creator) {
+      throw new Error('Creator user not found');
+    }
+
+    // Créer la société
+    const company = this.companyRepository.create(companyData);
+    const savedCompany = await this.companyRepository.save(company);
+
+    // Ajouter la relation dans la table de jointure
+    const memberOfCompany = this.crmUsersMemberOfCompanyRepository.create({
+      crmUser: creator,
+      company: savedCompany,
+      accessLevel: 'admin',  // Par exemple, définir un accessLevel par défaut
+      permissions: ['all'], // Définir les permissions par défaut
+    });
+
+    await this.crmUsersMemberOfCompanyRepository.save(memberOfCompany);
+
+    return savedCompany;
+
   }
 
   async findAll(): Promise<Company[]> {
@@ -42,18 +60,31 @@ export class CompaniesService {
     return company;
   }
 
-  async update(id: number, updateCompanyDto: UpdateCompanyDto): Promise<Company> {
+  async update(
+    id: number,
+    updateCompanyDto: UpdateCompanyDto
+  ): Promise<Company> {
     const company = await this.findOne(id);
     Object.assign(company, updateCompanyDto);
     return await this.companyRepository.save(company);
   }
 
   async remove(id: number): Promise<Company> {
+    // Charger la société à supprimer
     const company = await this.companyRepository.findOne({ where: { id } });
+  
     if (!company) {
       throw new NotFoundException(`Company with ID ${id} not found`);
     }
-    await this.companyRepository.delete(id);
+  
+    // Supprimer les relations dans la table de jointure crm_users_member_of_companies
+    await this.crmUsersMemberOfCompanyRepository.delete({ company: { id } });
+  
+    // Maintenant, supprimer la société elle-même
+    await this.companyRepository.remove(company);
+  
     return company;
   }
+  
+  
 }

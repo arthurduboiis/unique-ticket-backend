@@ -1,12 +1,12 @@
+import { CrmUsersMemberOfCompany } from '../../crm-users-member-of-companies/entities/crm-users-member-of-company.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Company } from '../../companies/entities/company.entity';
 
 @Entity('crm_users')
 export class CrmUser {
@@ -25,8 +25,8 @@ export class CrmUser {
   @Column({ unique: true })
   email: string;
 
-  @ManyToOne(() => Company, (company) => company.members)
-  company: Company;
+  @OneToMany(() => CrmUsersMemberOfCompany, (memberOf) => memberOf.crmUser)
+  companies: CrmUsersMemberOfCompany[];
 
   @Column('jsonb', { nullable: true })
   profilePicture: {
@@ -35,16 +35,7 @@ export class CrmUser {
   };
 
   @Column({ nullable: true })
-  companyId: number;
-
-  @Column({ nullable: true })
   role: string;
-
-  @Column({ nullable: true })
-  accessLevel: string;
-
-  @Column('jsonb', { nullable: true })
-  permissions: string[];
 
   @Column({ nullable: true })
   newsletter: boolean;
