@@ -7,6 +7,7 @@ import {
   IsDateString,
   IsDecimal,
   ValidateNested,
+  IsUUID,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -48,6 +49,7 @@ export class CreateTicketCategoryDto {
 
   @IsNumber()
   @IsNotEmpty({ message: 'L’ID de l’événement est obligatoire.' })
+  @IsOptional()
   eventId: number; // Si tu passes uniquement l'ID de l'Event, sinon utiliser `event: Event` DTO
 }
 
@@ -115,16 +117,13 @@ export class CreateEventDto {
   @IsNotEmpty({ message: 'Le prix de départ est obligatoire.' })
   startingPrice: number;
 
-  @IsString()
-  @IsNotEmpty({ message: 'L’identifiant du compte Stripe est obligatoire.' })
-  stripeAccountId: string;
-
   @ValidateNested({ each: true })
   @Type(() => CreateTicketCategoryDto)
-  @IsOptional() // Si les catégories sont optionnelles lors de la création
+  @IsNotEmpty({ message: 'Les catégories de tickets sont obligatoires.' })
   ticketCategories?: CreateTicketCategoryDto[];
 
-  @IsNumber()
-  @IsNotEmpty({ message: 'L’ID de la société est obligatoire.' })
-  companyId: number; // Si tu passes uniquement l'ID de la Company, sinon utiliser `company: Company` DTO
+
+  @IsUUID()
+  @IsNotEmpty()
+  companyId: number; 
 }

@@ -61,9 +61,6 @@ export class Event {
   @Column('decimal')
   startingPrice: number;
 
-  @Column()
-  stripeAccountId: string;
-
   @OneToMany(() => TicketCategory, (ticketCategory) => ticketCategory.event, {
     cascade: true,
   })

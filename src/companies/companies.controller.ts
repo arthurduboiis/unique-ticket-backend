@@ -8,8 +8,8 @@ export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) {}
 
   @Post()
-  create(@Body() createCompanyDto: CreateCompanyDto) {
-    return this.companiesService.create(createCompanyDto);
+  create(@Body() createCompanyDto: CreateCompanyDto, creatorId: number) {
+    return this.companiesService.create(createCompanyDto, creatorId);
   }
 
   @Get()
