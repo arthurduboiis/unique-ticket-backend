@@ -10,5 +10,6 @@ import { CrmUser } from 'src/crm_users/entities/crm_user.entity';
   imports: [TypeOrmModule.forFeature([Company, CrmUsersMemberOfCompany, CrmUser])],
   controllers: [CompaniesController],
   providers: [CompaniesService],
+  exports: [TypeOrmModule],
 })
 export class CompaniesModule {}
