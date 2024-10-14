@@ -4,8 +4,8 @@ import { Repository } from 'typeorm';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Company } from './entities/company.entity';
-import { CrmUser } from 'src/crm_users/entities/crm_user.entity';
-import { CrmUsersMemberOfCompany } from 'src/crm-users-member-of-companies/entities/crm-users-member-of-company.entity';
+import { CrmUser } from '../crm_users/entities/crm_user.entity';
+import { CrmUsersMemberOfCompany } from '../crm-users-member-of-companies/entities/crm-users-member-of-company.entity';
 
 @Injectable()
 export class CompaniesService {
