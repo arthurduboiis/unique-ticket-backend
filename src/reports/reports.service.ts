@@ -4,7 +4,7 @@ import { UpdateReportDto } from './dto/update-report.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Report } from './entities/report.entity';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from '../companies/entities/company.entity';
 import { In } from 'typeorm';
 
 @Injectable()
@@ -13,17 +13,19 @@ export class ReportsService {
     @InjectRepository(Report)
     private readonly reportRepository: Repository<Report>,
     @InjectRepository(Company)
-    private readonly companyRepository: Repository<Company>,
+    private readonly companyRepository: Repository<Company>
   ) {}
 
   async create(createReportDto: CreateReportDto): Promise<Report> {
     const { companyId, ...reportData } = createReportDto;
 
-    const company = await this.companyRepository.findOne({ where: { id: companyId } });
+    const company = await this.companyRepository.findOne({
+      where: { id: companyId },
+    });
     if (!companyId) {
       throw new Error('Company not found');
     }
-    const report = this.reportRepository.create({ ...reportData, company, });
+    const report = this.reportRepository.create({ ...reportData, company });
     const savedReport = await this.reportRepository.save(report);
     return savedReport;
   }
