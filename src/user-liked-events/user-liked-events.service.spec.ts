@@ -4,7 +4,7 @@ import { UserLikedEventsService } from './user-liked-events.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLikedEvent } from './entities/user-liked-event.entity';
-import { Company } from 'src/companies/entities/company.entity';
+import { Company } from '../companies/entities/company.entity';
 
 describe('UserLikedEventsService', () => {
   let service: UserLikedEventsService;
