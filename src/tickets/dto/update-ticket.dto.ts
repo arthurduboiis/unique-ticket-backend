@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateTicketDto } from './create-ticket.dto';
+import { IsBoolean } from 'class-validator';
 
-export class UpdateTicketDto extends PartialType(CreateTicketDto) {}
+export class UpdateTicketDto {
+  @IsBoolean()
+  used: boolean;
+}
