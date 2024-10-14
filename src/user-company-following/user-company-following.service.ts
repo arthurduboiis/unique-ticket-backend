@@ -10,7 +10,7 @@ export class UserCompanyFollowingService {
   constructor(
     @InjectRepository(UserCompanyFollowing)
     private readonly userCompanyFollowingRepository: Repository<UserCompanyFollowing>
-  ) {}
+  ) { }
 
   // Créer une relation "follow"
   async followCompany(createDto: CreateUserCompanyFollowingDto) {
@@ -34,6 +34,7 @@ export class UserCompanyFollowingService {
       { notificationsEnabled: updateDto.notificationsEnabled }
     );
   }
+
   async unfollowCompany(userId: number, companyId: number) {
     const result = await this.userCompanyFollowingRepository.delete({
       user: { id: userId },
