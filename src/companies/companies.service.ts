@@ -16,7 +16,7 @@ export class CompaniesService {
     private readonly crmUserRepository: Repository<CrmUser>,
     @InjectRepository(CrmUsersMemberOfCompany)
     private readonly crmUsersMemberOfCompanyRepository: Repository<CrmUsersMemberOfCompany>,
-  ) {}
+  ) { }
 
   async create(createCompanyDto: CreateCompanyDto): Promise<Company> {
     const { creatorId, ...companyData } = createCompanyDto;
@@ -70,21 +70,16 @@ export class CompaniesService {
   }
 
   async remove(id: number): Promise<Company> {
-    // Charger la société à supprimer
     const company = await this.companyRepository.findOne({ where: { id } });
   
     if (!company) {
       throw new NotFoundException(`Company with ID ${id} not found`);
     }
   
-    // Supprimer les relations dans la table de jointure crm_users_member_of_companies
     await this.crmUsersMemberOfCompanyRepository.delete({ company: { id } });
-  
-    // Maintenant, supprimer la société elle-même
     await this.companyRepository.remove(company);
   
     return company;
   }
-  
   
 }

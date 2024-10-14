@@ -60,7 +60,7 @@ describe('CompaniesService', () => {
         stripeAccountId: 'acct_1234',
         creatorId: 1,
       };
-
+  
       const creator = { id: 1 } as CrmUser;
       const createdCompany = {
         id: 1,
@@ -70,27 +70,51 @@ describe('CompaniesService', () => {
         followers: [],
         reports: [],
       } as Company;
-
+  
+      // Mock des méthodes des repositories
       jest.spyOn(crmUserRepository, 'findOne').mockResolvedValue(creator);
-      jest.spyOn(companyRepository, 'create').mockReturnValue(createdCompany); // Mock correct de create
+      jest.spyOn(companyRepository, 'create').mockReturnValue(createdCompany); // Correct mocking
       jest.spyOn(companyRepository, 'save').mockResolvedValue(createdCompany);
-      jest
-        .spyOn(crmUsersMemberOfCompanyRepository, 'save')
-        .mockResolvedValue(null);
-
+      jest.spyOn(crmUsersMemberOfCompanyRepository, 'create').mockReturnValue({
+        crmUser: creator,
+        company: createdCompany,
+        accessLevel: 'admin',
+        permissions: ['all'],
+      } as CrmUsersMemberOfCompany); // Mock de la méthode create pour la jointure
+      jest.spyOn(crmUsersMemberOfCompanyRepository, 'save').mockResolvedValue(null);  // Pas besoin du retour réel ici
+  
       const result = await service.create(createCompanyDto);
-
+  
+      // Vérification que tout fonctionne comme prévu
       expect(result).toEqual(createdCompany);
       expect(crmUserRepository.findOne).toHaveBeenCalledWith({
         where: { id: createCompanyDto.creatorId },
       });
-      expect(companyRepository.create).toHaveBeenCalledWith(expect.any(Object)); // Vérification de create
-      expect(companyRepository.save).toHaveBeenCalledWith(expect.any(Object));
+      expect(companyRepository.create).toHaveBeenCalledWith({
+        name: 'Test Company',
+        companyLogo: { name: 'logo', url: 'url' },
+        primaryColor: '#FFFFFF',
+        accountSubscriptionStatus: 'active',
+        stripeAccountId: 'acct_1234',
+      });
+      expect(companyRepository.save).toHaveBeenCalledWith(createdCompany);
+      expect(crmUsersMemberOfCompanyRepository.create).toHaveBeenCalledWith({
+        crmUser: creator,
+        company: createdCompany,
+        accessLevel: 'admin',
+        permissions: ['all'],
+      });
       expect(crmUsersMemberOfCompanyRepository.save).toHaveBeenCalledWith(
-        expect.any(Object)
+        expect.objectContaining({
+          crmUser: creator,
+          company: createdCompany,
+          accessLevel: 'admin',
+          permissions: ['all'],
+        }),
       );
     });
   });
+ 
 
   describe('findAll', () => {
     it('should return an array of companies', async () => {
@@ -195,25 +219,25 @@ describe('CompaniesService', () => {
         followers: [],
         reports: [],
       };
-
-      jest.spyOn(service, 'findOne').mockResolvedValue(company);
-      jest.spyOn(companyRepository, 'findOne').mockResolvedValue(company); // Mock pour findOne
-      jest
-        .spyOn(crmUsersMemberOfCompanyRepository, 'delete')
-        .mockResolvedValue(null);
-      jest.spyOn(companyRepository, 'remove').mockResolvedValue(company);
-
-      const result = await service.remove(1);
-
-      expect(result).toEqual(company);
-      expect(service.findOne).toHaveBeenCalledWith(1); // Vérifie que findOne a bien été appelée
+  
+      // Mock des méthodes du service et des repositories
+      jest.spyOn(service, 'findOne').mockResolvedValue(company);  // Mock du service findOne
+      jest.spyOn(companyRepository, 'findOne').mockResolvedValue(company); // Mock pour findOne du repository
+      jest.spyOn(crmUsersMemberOfCompanyRepository, 'delete').mockResolvedValue(null);  // Mock de la suppression des relations
+      jest.spyOn(companyRepository, 'remove').mockResolvedValue(company);  // Mock de la suppression de la société
+  
+      const result = await service.remove(1);  // Appel de la méthode remove
+  
+      expect(result).toEqual(company);  // Le résultat devrait être la société supprimée
       expect(companyRepository.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
       });
       expect(crmUsersMemberOfCompanyRepository.delete).toHaveBeenCalledWith({
         company: { id: 1 },
       });
-      expect(companyRepository.remove).toHaveBeenCalledWith(company);
+      expect(companyRepository.remove).toHaveBeenCalledWith(company);  // Vérifie que la société est bien supprimée
     });
   });
+  
+  
 });
