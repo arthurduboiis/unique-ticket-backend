@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 import { ReportsController } from './reports.controller';
 import { ReportsService } from './reports.service';
 import { CreateReportDto } from './dto/create-report.dto';
@@ -132,20 +133,22 @@ describe('ReportsController', () => {
 
       jest.spyOn(service, 'findOne').mockResolvedValue(report);
 
-      const result = await controller.findOne('1');
+      const result = await controller.findOne(1);
 
       expect(result).toEqual(report);
       expect(service.findOne).toHaveBeenCalledWith(1);
     });
 
     it('should throw an error if the report is not found', async () => {
-      jest.spyOn(service, 'findOne').mockResolvedValue(null);
-
-      await expect(controller.findOne('1')).rejects.toThrow(
-        new Error('Report with ID 1 not found')
+      jest.spyOn(service, 'findOne').mockRejectedValue(
+        new NotFoundException('Report with ID 100 not found')
       );
-      expect(service.findOne).toHaveBeenCalledWith(1);
+      await expect(controller.findOne(100)).rejects.toThrow(
+        new NotFoundException('Report with ID 100 not found')
+      );      
+      expect(service.findOne).toHaveBeenCalledWith(100);
     });
+    
   });
 
   describe('update', () => {

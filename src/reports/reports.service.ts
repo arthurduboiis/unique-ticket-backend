@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateReportDto } from './dto/create-report.dto';
 import { UpdateReportDto } from './dto/update-report.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,7 +22,7 @@ export class ReportsService {
     const company = await this.companyRepository.findOne({
       where: { id: companyId },
     });
-    if (!companyId) {
+    if (!company) {
       throw new Error('Company not found');
     }
     const report = this.reportRepository.create({ ...reportData, company });
@@ -37,7 +37,7 @@ export class ReportsService {
   async findOne(id: number): Promise<Report> {
     const report = await this.reportRepository.findOne({ where: { id } });
     if (!report) {
-      throw new Error(`Report with ID ${id} not found`);
+      throw new NotFoundException(`Report with ID ${id} not found`);
     }
     return report;
   }

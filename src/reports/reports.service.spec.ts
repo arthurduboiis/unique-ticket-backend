@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 import { ReportsService } from './reports.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -87,8 +88,10 @@ describe('ReportsService', () => {
         companyId: 1,
       };
 
+      // Simuler que la société n'est pas trouvée
       jest.spyOn(companyRepository, 'findOne').mockResolvedValue(null);
 
+      // Vérifier que l'exception est levée
       await expect(service.create(createReportDto)).rejects.toThrow(
         'Company not found'
       );
@@ -137,10 +140,12 @@ describe('ReportsService', () => {
     });
 
     it('should throw an error if report not found', async () => {
+      // Simuler que le rapport n'est pas trouvé (renvoyer null)
       jest.spyOn(reportRepository, 'findOne').mockResolvedValue(null);
 
+      // Vérifier que le service lève une exception NotFoundException
       await expect(service.findOne(1)).rejects.toThrow(
-        'Report with ID 1 not found'
+        new NotFoundException('Report with ID 1 not found')
       );
     });
   });
