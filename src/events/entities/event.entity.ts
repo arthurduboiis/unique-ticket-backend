@@ -69,7 +69,7 @@ export class Event {
   @ManyToOne(() => Company, (company) => company.events)
   company: Company;
 
-  @OneToMany(() => Ticket, (ticket) => ticket.event)
+  @OneToMany(() => Ticket, (ticket) => ticket.event, { nullable: true })
   tickets: Ticket[];
 
   @CreateDateColumn({ type: 'timestamptz' })

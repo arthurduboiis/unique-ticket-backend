@@ -10,6 +10,7 @@ import {
   IsUUID,
 } from 'class-validator';
 import { Type } from 'class-transformer';
+import { TicketCategory } from '../entities/ticket-category.entity';
 
 export class CreateTicketCategoryDto {
   @IsString()
@@ -46,13 +47,7 @@ export class CreateTicketCategoryDto {
     }
   )
   availabilityDateTickets: Date;
-
-  @IsNumber()
-  @IsNotEmpty({ message: 'L’ID de l’événement est obligatoire.' })
-  @IsOptional()
-  eventId: number; // Si tu passes uniquement l'ID de l'Event, sinon utiliser `event: Event` DTO
 }
-
 export class CreateEventDto {
   @IsArray()
   @IsOptional()
@@ -118,9 +113,9 @@ export class CreateEventDto {
   startingPrice: number;
 
   @ValidateNested({ each: true })
-  @Type(() => CreateTicketCategoryDto)
+  @Type(() => CreateTicketCategoryDto)  // Utiliser CreateTicketCategoryDto ici
   @IsNotEmpty({ message: 'Les catégories de tickets sont obligatoires.' })
-  ticketCategories?: CreateTicketCategoryDto[];
+  ticketCategories: CreateTicketCategoryDto[];
 
 
   @IsUUID()
