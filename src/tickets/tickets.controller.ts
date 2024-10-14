@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { UpdateTicketDto } from './dto/update-ticket.dto';
@@ -12,23 +21,30 @@ export class TicketsController {
     return this.ticketsService.create(createTicketDto);
   }
 
-  @Get()
-  findAll() {
-    return this.ticketsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ticketsService.findOne(+id);
-  }
-
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTicketDto: UpdateTicketDto) {
+  async updateTicketUsed(
+    @Param('id') id: string,
+    @Body() updateTicketDto: UpdateTicketDto
+  ) {
     return this.ticketsService.update(+id, updateTicketDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ticketsService.remove(+id);
+  @Get('user/:userId')
+  async findAllTicketsForUser(@Param('userId') userId: number) {
+    return this.ticketsService.findAllTicketsForUser(userId);
+  }
+
+  // Obtenir tous les tickets d'un utilisateur entre deux dates (non utilisés)
+  @Get('user/:userId/filter')
+  async findTicketsForUserBetweenDates(
+    @Param('userId') userId: number,
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    return this.ticketsService.findTicketsForUserBetweenDates(
+      userId,
+      new Date(startDate),
+      new Date(endDate),
+    );
   }
 }

@@ -1,33 +1,23 @@
-import {
-  IsString,
-  IsNotEmpty,
-  IsNumber,
-  IsBoolean,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
-import { Type } from 'class-transformer';
-import { Event } from 'src/events/entities/event.entity';
-import { User } from 'src/users/entities/user.entity';
+import { IsString, IsNumber, IsBoolean, IsNotEmpty, IsUUID } from 'class-validator';
 
 export class CreateTicketDto {
   @IsString()
-  @IsNotEmpty({ message: 'La catégorie est obligatoire.' })
+  @IsNotEmpty()
   category: string;
 
   @IsNumber()
-  @IsNotEmpty({ message: 'Le token ID est obligatoire.' })
+  @IsNotEmpty()
   tokenId: number;
 
   @IsBoolean()
-  @IsNotEmpty({ message: 'Le champ utilisé doit être un booléen.' })
+  @IsNotEmpty()
   used: boolean;
 
-  @ValidateNested()
-  @Type(() => Event)
-  event: Event; // Envoie de l'objet Event complet
+  @IsUUID() // Assume que l'ID d'un événement est un UUID
+  @IsNotEmpty()
+  eventId: number;
 
-  @ValidateNested()
-  @Type(() => User)
-  user: User; // Envoie de l'objet User complet
+  @IsUUID() // Assume que l'ID d'un utilisateur est un UUID
+  @IsNotEmpty()
+  userId: number;
 }
