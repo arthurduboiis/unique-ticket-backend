@@ -3,11 +3,13 @@ import { UsersService } from './users.service';
 import { Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { Event } from '../events/entities/event.entity'; // Import Event entity
 import { DeleteResult } from 'typeorm';
 
 describe('UsersService', () => {
   let service: UsersService;
-  let repository: Repository<User>;
+  let userRepository: Repository<User>;
+  let eventRepository: Repository<Event>; // Add event repository mock
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -17,17 +19,23 @@ describe('UsersService', () => {
           provide: getRepositoryToken(User),
           useClass: Repository,
         },
+        {
+          provide: getRepositoryToken(Event), // Add this mock for EventRepository
+          useClass: Repository,
+        },
       ],
     }).compile();
 
     service = module.get<UsersService>(UsersService);
-    repository = module.get<Repository<User>>(getRepositoryToken(User));
+    userRepository = module.get<Repository<User>>(getRepositoryToken(User));
+    eventRepository = module.get<Repository<Event>>(getRepositoryToken(Event)); // Assign event repository
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
+  // Test for creating a user
   describe('create', () => {
     it('should create a new user', async () => {
       const createUserDto = { email: 'test@example.com' };
@@ -48,13 +56,19 @@ describe('UsersService', () => {
         created_at: new Date(),
         updated_at: new Date(),
       };
-      jest.spyOn(repository, 'save').mockResolvedValue(user);
 
-      expect(await service.create(createUserDto)).toEqual(user);
-      expect(repository.save).toHaveBeenCalledWith(createUserDto);
+      // Mock the `create` and `save` methods
+      jest.spyOn(userRepository, 'create').mockReturnValue(user as any); // Return the user object
+      jest.spyOn(userRepository, 'save').mockResolvedValue(user);
+
+      const result = await service.create(createUserDto);
+      expect(result).toEqual(user);
+      expect(userRepository.create).toHaveBeenCalledWith(createUserDto);
+      expect(userRepository.save).toHaveBeenCalledWith(user);
     });
   });
 
+  // Test for finding a user
   describe('findOne', () => {
     it('should find a user by id', async () => {
       const user = {
@@ -74,13 +88,20 @@ describe('UsersService', () => {
         created_at: new Date(),
         updated_at: new Date(),
       };
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(user);
 
-      expect(await service.findOne(1)).toEqual(user);
-      expect(repository.findOneBy).toHaveBeenCalledWith({ id: 1 });
+      // Mock the `findOne` method
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
+
+      const result = await service.findOne(1);
+      expect(result).toEqual(user);
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 1 },
+        relations: ['liked', 'following'],
+      });
     });
   });
 
+  // Test for updating a user
   describe('update', () => {
     it('should update a user', async () => {
       const updateUserDto = { email: 'updated@example.com' };
@@ -89,7 +110,7 @@ describe('UsersService', () => {
         firstname: 'John',
         lastname: 'Doe',
         phoneNumber: '123456789',
-        email: 'updated@example.com',
+        email: 'updated@example.com', // Email mis à jour
         newsletter: true,
         region: 'NA',
         gender: 'male',
@@ -101,23 +122,41 @@ describe('UsersService', () => {
         created_at: new Date(),
         updated_at: new Date(),
       };
-      jest.spyOn(repository, 'save').mockResolvedValue(user);
-
-      expect(await service.update(1, updateUserDto)).toEqual(user);
-      expect(repository.save).toHaveBeenCalledWith({ id: 1, ...updateUserDto });
+  
+      // Mock the `findOne` and `save` methods
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
+      jest.spyOn(userRepository, 'save').mockResolvedValue(user);
+  
+      const result = await service.update(1, updateUserDto);
+  
+      expect(result).toEqual(user);
+  
+      // Expect the full object to be passed to save
+      expect(userRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 1 },
+        relations: ['liked', 'following'],
+      });
+  
+      // Vérifier que save a bien été appelé avec l'objet complet
+      expect(userRepository.save).toHaveBeenCalledWith({
+        ...user,
+        email: updateUserDto.email, // Seule l'email a été modifiée
+      });
     });
   });
+  
 
+  // Test for removing a user
   describe('remove', () => {
     it('should remove a user', async () => {
       const deleteResult: DeleteResult = { affected: 1, raw: [] }; // Mocking a valid DeleteResult
-      const result = 'User deleted successfully';
+      const result = "L'utilisateur a été supprimé avec succès.";
 
-      jest.spyOn(repository, 'delete').mockResolvedValue(deleteResult);
-      jest.spyOn(service, 'remove').mockResolvedValue(result);
+      // Mock the `delete` method
+      jest.spyOn(userRepository, 'delete').mockResolvedValue(deleteResult);
 
       expect(await service.remove(1)).toBe(result);
-      expect(repository.delete).toHaveBeenCalledWith(1);
+      expect(userRepository.delete).toHaveBeenCalledWith(1);
     });
   });
 });
