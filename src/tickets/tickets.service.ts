@@ -4,8 +4,8 @@ import { UpdateTicketDto } from './dto/update-ticket.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { Repository } from 'typeorm';
-import { Event } from 'src/events/entities/event.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Event } from '../events/entities/event.entity';
+import { User } from '../users/entities/user.entity';
 
 
 @Injectable()
