@@ -2,10 +2,14 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { CrmUsersMemberOfCompaniesService } from '../crm-users-member-of-companies/crm-users-member-of-companies.service';
 
 @Controller('companies')
 export class CompaniesController {
-  constructor(private readonly companiesService: CompaniesService) {}
+  constructor(
+    private readonly companiesService: CompaniesService,
+    private readonly crmUsersMemberOfCompaniesService: CrmUsersMemberOfCompaniesService,
+  ) {}
 
   @Post()
   create(@Body() createCompanyDto: CreateCompanyDto) {
@@ -30,5 +34,10 @@ export class CompaniesController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.companiesService.remove(+id);
+  }
+
+  @Get(':id/users')
+  async getUsersByCompany(@Param('id') companyId: number) {
+    return this.crmUsersMemberOfCompaniesService.getUsersByCompany(companyId);
   }
 }
