@@ -13,6 +13,7 @@ import { EventsModule } from './events/events.module';
 import { UserCompanyFollowingModule } from './user-company-following/user-company-following.module';
 import { UserLikedEventsModule } from './user-liked-events/user-liked-events.module';
 import { CrmUsersMemberOfCompaniesModule } from './crm-users-member-of-companies/crm-users-member-of-companies.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -33,7 +34,8 @@ import { CrmUsersMemberOfCompaniesModule } from './crm-users-member-of-companies
     ReportsModule,
     UserCompanyFollowingModule,
     UserLikedEventsModule,
-    CrmUsersMemberOfCompaniesModule
+    CrmUsersMemberOfCompaniesModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],

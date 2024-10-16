@@ -16,4 +16,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
   @Type(() => UserCompanyFollowing)
   @IsOptional()
   following?: UserCompanyFollowing[];
+
+  @IsOptional()
+  password?: string;
 }

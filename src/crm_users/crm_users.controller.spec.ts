@@ -39,6 +39,7 @@ describe('CrmUsersController', () => {
         lastname: 'Doe',
         phoneNumber: '+33123456789',
         email: 'john.doe@example.com',
+        password: 'password',
         role: 'admin',
         newsletter: true,
         profilePicture: {
@@ -53,6 +54,7 @@ describe('CrmUsersController', () => {
         lastname: 'Doe',
         phoneNumber: '+33123456789',
         email: 'john.doe@example.com',
+        password: 'password',
         role: 'admin',
         newsletter: true,
         profilePicture: {
@@ -80,6 +82,7 @@ describe('CrmUsersController', () => {
         lastname: 'Doe',
         phoneNumber: '+33123456789',
         email: 'john.doe@example.com',
+        password: 'password',
         role: 'admin',
         newsletter: true,
         profilePicture: {
@@ -111,6 +114,7 @@ describe('CrmUsersController', () => {
         lastname: 'Doe',
         phoneNumber: '+33123456789',
         email: 'jane.doe@example.com',
+        password: 'password',
         role: 'admin',
         newsletter: true,
         profilePicture: {
@@ -140,6 +144,7 @@ describe('CrmUsersController', () => {
         lastname: 'Doe',
         phoneNumber: '+33123456789',
         email: 'john.doe@example.com',
+        password: 'password',
         role: 'admin',
         newsletter: true,
         profilePicture: {

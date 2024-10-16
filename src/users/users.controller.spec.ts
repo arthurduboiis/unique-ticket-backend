@@ -34,13 +34,14 @@ describe('UsersController', () => {
 
   describe('create', () => {
     it('should call service.create with correct data', async () => {
-      const dto: CreateUserDto = { email: 'test@example.com' };
+      const dto: CreateUserDto = { email: 'test@example.com', password: 'password' };
       const result = {
         id: 1,
         firstname: 'John',
         lastname: 'Doe',
         phoneNumber: '123456789',
         email: 'test@example.com',
+        password: "password",
         newsletter: true,
         region: 'NA',
         gender: 'male',
@@ -68,6 +69,7 @@ describe('UsersController', () => {
         lastname: 'Doe',
         phoneNumber: '123456789',
         email: 'test@example.com',
+        password: "password",
         newsletter: true,
         region: 'NA',
         gender: 'male',
@@ -95,6 +97,7 @@ describe('UsersController', () => {
         lastname: 'Doe',
         phoneNumber: '123456789',
         email: 'updated@example.com',
+        password: "password",
         newsletter: true,
         region: 'NA',
         gender: 'male',

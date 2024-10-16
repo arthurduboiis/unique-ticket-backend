@@ -49,6 +49,11 @@ export class CreateCrmUserDto {
   @IsNotEmpty({ message: 'Email est obligatoire.' })
   email: string;
 
+  @IsString()
+  @IsNotEmpty({ message: 'Mot de passe obligatoire.' })
+  @MinLength(8, { message: 'Le mot de passe doit contenir au moins 8 caractères.' })
+  password: string;
+
   @ValidateNested()
   @Type(() => ProfilePictureDto)
   @IsOptional()
