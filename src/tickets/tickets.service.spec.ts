@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { Ticket } from './entities/ticket.entity';
 import { Event } from 'src/events/entities/event.entity';
 import { User } from 'src/users/entities/user.entity';
+import { CreateTicketDto } from './dto/create-ticket.dto';
 import { NotFoundException } from '@nestjs/common';
 
 describe('TicketsService', () => {
@@ -48,6 +49,15 @@ describe('TicketsService', () => {
     it('should create a new ticket', async () => {
       const mockEvent = { id: 1 } as Event;
       const mockUser = { id: 1 } as User;
+      const mockTicketDto = {
+        id: 1,
+        category: 'VIP',
+        tokenId: 12345,
+        used: false,
+        eventId: mockEvent.id,
+        userId: mockUser.id,
+      } as CreateTicketDto;
+
       const mockTicket = {
         id: 1,
         category: 'VIP',
@@ -62,8 +72,8 @@ describe('TicketsService', () => {
       jest.spyOn(ticketRepository, 'create').mockReturnValue(mockTicket);
       jest.spyOn(ticketRepository, 'save').mockResolvedValue(mockTicket);
 
-      const result = await service.create(mockTicket);
-      expect(result).toEqual(mockTicket);
+      const result = await service.create(mockTicketDto);
+      expect(result).toEqual(mockTicketDto);
       expect(ticketRepository.create).toHaveBeenCalledWith({
         category: 'VIP',
         tokenId: 12345,
@@ -81,9 +91,9 @@ describe('TicketsService', () => {
         category: 'VIP',
         tokenId: 12345,
         used: false,
-        event: mockEvent,
-        user: mockUser,
-      } as Ticket;
+        eventId: mockEvent.id,
+        userId: mockUser.id,
+      } as CreateTicketDto;
 
       jest.spyOn(eventRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
@@ -106,6 +116,8 @@ describe('TicketsService', () => {
         event: mockEvent,
         user: mockUser,
       } as Ticket;
+
+      const mockTickets = [mockTicket];
 
       jest
         .spyOn(ticketRepository, 'find')
