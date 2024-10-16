@@ -3,6 +3,12 @@ import { CompaniesController } from './companies.controller';
 import { CompaniesService } from './companies.service';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { CrmUsersMemberOfCompaniesService } from '../crm-users-member-of-companies/crm-users-member-of-companies.service';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Company } from './entities/company.entity';
+import { CrmUser } from '../crm_users/entities/crm_user.entity';
+import { CrmUsersMemberOfCompany } from '../crm-users-member-of-companies/entities/crm-users-member-of-company.entity';
 
 describe('CompaniesController', () => {
   let controller: CompaniesController;
@@ -12,8 +18,21 @@ describe('CompaniesController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CompaniesController],
       providers: [
+        CompaniesService,
         {
-          provide: CompaniesService,
+          provide: getRepositoryToken(Company), // Mock du CompanyRepository
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(CrmUser), // Mock du CrmUserRepository
+          useClass: Repository,
+        },
+        {
+          provide: getRepositoryToken(CrmUsersMemberOfCompany), // Mock du CrmUsersMemberOfCompanyRepository
+          useClass: Repository,
+        },
+        {
+          provide: CrmUsersMemberOfCompaniesService,
           useValue: {
             create: jest.fn(),
             findAll: jest.fn(),
@@ -47,11 +66,7 @@ describe('CompaniesController', () => {
 
       const createdCompany = {
         id: 1,
-        name: 'Test Company',
-        companyLogo: { name: 'logo', url: 'url' },
-        primaryColor: '#FFFFFF',
-        accountSubscriptionStatus: 'active',
-        stripeAccountId: 'acct_1234',
+        ...dto,
         events: [],
         members: [],
         followers: [],
