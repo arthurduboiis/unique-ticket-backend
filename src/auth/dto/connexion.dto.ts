@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEmail,
   IsNotEmpty,
   IsString,
@@ -15,4 +16,8 @@ export class ConnexionDto {
   @MinLength(8, { message: 'Le mot de passe doit contenir au moins 8 caractères.' })
   @IsNotEmpty({ message: 'Mot de passe obligatoire.' })
   password: string;
+
+  @IsBoolean()
+  @IsNotEmpty({ message: 'isCrmUser obligatoire.' })
+  isCrmUser: boolean;
 }
