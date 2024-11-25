@@ -35,6 +35,10 @@ export class UsersService {
     });
   }
 
+  async findOneByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
+  }
+
   // Mettre à jour un utilisateur
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     // Charger l'utilisateur existant

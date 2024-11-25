@@ -8,5 +8,6 @@ import { CrmUser } from './entities/crm_user.entity';
   imports: [TypeOrmModule.forFeature([CrmUser])],
   controllers: [CrmUsersController],
   providers: [CrmUsersService],
+  exports: [CrmUsersService],
 })
 export class CrmUsersModule {}

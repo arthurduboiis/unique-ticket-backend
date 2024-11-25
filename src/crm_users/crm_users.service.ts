@@ -30,6 +30,16 @@ export class CrmUsersService {
     return user;
   }
 
+  async findOneByEmail(email: string): Promise<CrmUser> {
+    const user = await this.crmUsersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new NotFoundException(`CrmUser with email ${email} not found`);
+    }
+    return user;
+  }
+
+
+
   async update(id: number, updateCrmUserDto: UpdateCrmUserDto): Promise<CrmUser> {
     const user = await this.findOne(id); // Will throw NotFoundException if not found
     Object.assign(user, updateCrmUserDto);

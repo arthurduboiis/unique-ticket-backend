@@ -39,6 +39,7 @@ describe('UserLikedEventsService', () => {
           lastname: '',
           phoneNumber: '',
           email: '',
+          password: '',
           newsletter: false,
           region: '',
           gender: '',

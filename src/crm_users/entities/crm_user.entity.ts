@@ -25,6 +25,9 @@ export class CrmUser {
   @Column({ unique: true })
   email: string;
 
+  @Column()
+  password: string;
+
   @OneToMany(() => CrmUsersMemberOfCompany, (memberOf) => memberOf.crmUser)
   companies: CrmUsersMemberOfCompany[];
 

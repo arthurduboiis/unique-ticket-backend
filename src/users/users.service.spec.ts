@@ -38,13 +38,14 @@ describe('UsersService', () => {
   // Test for creating a user
   describe('create', () => {
     it('should create a new user', async () => {
-      const createUserDto = { email: 'test@example.com' };
+      const createUserDto = { email: 'test@example.com', password: 'password' };
       const user = {
         id: 1,
         firstname: 'John',
         lastname: 'Doe',
         phoneNumber: '123456789',
         email: 'test@example.com',
+        password: 'password',
         newsletter: true,
         region: 'NA',
         gender: 'male',
@@ -77,6 +78,7 @@ describe('UsersService', () => {
         lastname: 'Doe',
         phoneNumber: '123456789',
         email: 'test@example.com',
+        password: 'password',
         newsletter: true,
         region: 'NA',
         gender: 'male',
@@ -110,7 +112,8 @@ describe('UsersService', () => {
         firstname: 'John',
         lastname: 'Doe',
         phoneNumber: '123456789',
-        email: 'updated@example.com', // Email mis à jour
+        email: 'updated@example.com', 
+        password: 'password',
         newsletter: true,
         region: 'NA',
         gender: 'male',
@@ -122,21 +125,21 @@ describe('UsersService', () => {
         created_at: new Date(),
         updated_at: new Date(),
       };
-  
+
       // Mock the `findOne` and `save` methods
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(user);
       jest.spyOn(userRepository, 'save').mockResolvedValue(user);
-  
+
       const result = await service.update(1, updateUserDto);
-  
+
       expect(result).toEqual(user);
-  
+
       // Expect the full object to be passed to save
       expect(userRepository.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
         relations: ['liked', 'following'],
       });
-  
+
       // Vérifier que save a bien été appelé avec l'objet complet
       expect(userRepository.save).toHaveBeenCalledWith({
         ...user,
@@ -144,7 +147,6 @@ describe('UsersService', () => {
       });
     });
   });
-  
 
   // Test for removing a user
   describe('remove', () => {

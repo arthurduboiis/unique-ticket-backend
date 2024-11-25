@@ -33,6 +33,7 @@ describe('CrmUsersService', () => {
         firstname: 'John',
         lastname: 'Doe', // Obligatoire dans ce contexte
         email: 'john.doe@example.com',
+        password: 'password',
         phoneNumber: '+33123456789',
         profilePicture: {
           name: 'profile-pic.png',
