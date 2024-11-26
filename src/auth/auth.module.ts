@@ -14,8 +14,8 @@ import { CrmUser } from 'src/crm_users/entities/crm_user.entity';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: 'yourSecretKey', // Clé secrète pour signer les tokens
-      signOptions: { expiresIn: '60m' }, // Expiration du token
+      secret: process.env.JWT_SECRET, 
+      signOptions: { expiresIn: process.env.JWT_EXPIRES_IN },
     }),
     CrmUsersModule,
     UsersModule,

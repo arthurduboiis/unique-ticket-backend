@@ -27,6 +27,12 @@ export class UsersService {
     return this.userRepository.save(user);
   }
 
+  async findAll(): Promise<User[]> {
+    return this.userRepository.find({
+      relations: ['liked', 'following'],
+    });
+  }
+
   // Récupérer un utilisateur par son ID
   async findOne(id: number): Promise<User> {
     return this.userRepository.findOne({

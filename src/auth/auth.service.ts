@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CrmUsersService } from '../crm_users/crm_users.service';
@@ -9,45 +9,84 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly crmUsersService: CrmUsersService,
-    private readonly jwtService: JwtService,
+    private readonly jwtService: JwtService
   ) {}
 
-  async validateUser(email: string, password: string, isCrmUser: boolean): Promise<any> {
-    const user = isCrmUser 
-      ? await this.crmUsersService.findOneByEmail(email)
-      : await this.usersService.findOneByEmail(email);
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.usersService.findOneByEmail(email);
 
-    if (user && await bcrypt.compare(password, user.password)) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
     }
     return null;
   }
 
-  async login(user: any, isCrmUser: boolean) {
-    const payload = { email: user.email, sub: user.id, role: isCrmUser ? 'crm_user' : 'user' };
+  private generateAccessToken(user: any): string {
+    const payload = { email: user.email, sub: user.id, role: 'user' };
+    return this.jwtService.sign(payload, { expiresIn: '15m' }); // Durée de vie : 15 minutes
+  }
+
+  private generateRefreshToken(user: any): string {
+    const payload = { email: user.email, sub: user.id };
+    return this.jwtService.sign(payload, { expiresIn: '7d' }); // Durée de vie : 7 jours
+  }
+
+  async login(user: any) {
+    const accessToken = this.generateAccessToken(user);
+    const refreshToken = this.generateRefreshToken(user);
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: accessToken,
+      refresh_token: refreshToken,
     };
   }
 
-  async register(user: any, isCrmUser: boolean) {
+  async register(user: any) {
     const hashedPassword = await bcrypt.hash(user.password, 10);
-    if (isCrmUser) {
-      return this.crmUsersService.create({
-        ...user,
+    console.log(user);
+    try {
+      const existingUser = await this.usersService.findOneByEmail(user.emailLowerCase);
+      if (existingUser) {
+        throw new ConflictException(
+          'Un utilisateur avec cet email existe déjà.'
+        );
+      }
+
+      const userCreated = await this.usersService.create({
+        email: user.emailLowerCase,
         password: hashedPassword,
       });
-    } else {
-      return this.usersService.create({
-        ...user,
-        password: hashedPassword,
-      });
+
+      return userCreated;
+    } catch (error) {
+      if(error instanceof ConflictException) {
+        throw error;
+      }
+      throw new Error(error);
     }
   }
 
+  async refreshToken(refreshToken: string): Promise<{ access_token: string }> {
+    try {
+      // Vérifie la validité du Refresh Token
+      const decoded = this.jwtService.verify(refreshToken);
+      const user = await this.usersService.findOneByEmail(decoded.email);
+
+      if (!user) {
+        throw new UnauthorizedException('Utilisateur non trouvé');
+      }
+
+      // Génère un nouveau Access Token
+      const accessToken = this.generateAccessToken(user);
+      return { access_token: accessToken };
+    } catch (error) {
+      throw new UnauthorizedException('Refresh token invalide ou expiré');
+    }
+  }
+    
+
   // async updatePassword(user: any, newPassword: string, oldPassword: string, isCrmUser: boolean) {
-  //   const userToCheck = isCrmUser 
+  //   const userToCheck = isCrmUser
   //     ? await this.crmUsersService.findOneByEmail(user.email)
   //     : await this.usersService.findOneByEmail(user.email);
 
@@ -71,5 +110,4 @@ export class AuthService {
   //     return this.usersService.resetPassword(email, hashedPassword);
   //   }
   // }
-
 }
