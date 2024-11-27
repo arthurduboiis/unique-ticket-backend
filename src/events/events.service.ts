@@ -60,7 +60,9 @@ export class EventsService {
   
   
   async findAll(): Promise<Event[]> {
-    return await this.eventRepository.find();
+    return await this.eventRepository.find({
+      relations: ['ticketCategories', 'company', 'likes'],
+    });
   }
 
   async findOne(id: number): Promise<Event> {
