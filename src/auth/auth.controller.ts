@@ -1,7 +1,8 @@
-import { Controller, Post, Body, Request, Res, ConflictException } from '@nestjs/common';
+import { Controller, Post, Patch, Body, UseGuards, Req, Res, ConflictException } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ConnexionDto } from './dto/connexion.dto';
 import { Response } from 'express';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard'; // Assurez-vous d'avoir une garde JWT pour protéger la route
 
 @Controller('auth')
 export class AuthController {
@@ -42,5 +43,17 @@ export class AuthController {
   @Post('refresh')
   async refresh(@Body('refreshToken') refreshToken: string) {
     return this.authService.refreshToken(refreshToken);
+  }
+
+  @UseGuards(JwtAuthGuard) // Protège la route avec un token JWT
+  @Patch('change-password')
+  async changePassword(
+    @Req() req: any,
+    @Body('oldPassword') oldPassword: string,
+    @Body('newPassword') newPassword: string,
+    @Body('confirmPassword') confirmPassword: string
+  ) {
+    const user = req.user; // Récupère les infos de l'utilisateur connecté via le token
+    return this.authService.updatePassword(user, oldPassword, newPassword, confirmPassword);
   }
 }

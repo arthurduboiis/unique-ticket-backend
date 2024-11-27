@@ -83,24 +83,19 @@ export class AuthService {
       throw new UnauthorizedException('Refresh token invalide ou expiré');
     }
   }
-    
 
-  // async updatePassword(user: any, newPassword: string, oldPassword: string, isCrmUser: boolean) {
-  //   const userToCheck = isCrmUser
-  //     ? await this.crmUsersService.findOneByEmail(user.email)
-  //     : await this.usersService.findOneByEmail(user.email);
-
-  //   if (userToCheck && await bcrypt.compare(oldPassword, userToCheck.password)) {
-  //     const hashedPassword = await bcrypt.hash(newPassword, 10);
-  //     if (isCrmUser) {
-  //       return this.crmUsersService.updatePassword(user.email, hashedPassword);
-  //     } else {
-  //       return this.usersService.updatePassword(user.email, hashedPassword);
-  //     }
-  //   } else {
-  //     return null;
-  //   }
-  // }
+  async updatePassword(user: any, oldPassword: string, newPassword: string, confirmPassword: string): Promise<string | null> {
+    const userToCheck = await this.usersService.findOneByEmail(user.email);
+    console.log(userToCheck);
+    console.log("OLD",oldPassword);
+    console.log(newPassword);
+    if (userToCheck && (await bcrypt.compare(oldPassword, userToCheck.password))) {  
+      return this.usersService.changePassword(userToCheck.id, oldPassword, newPassword, confirmPassword);
+    } else {
+      throw new UnauthorizedException('Ancien mot de passe incorrect ou utilisateur non trouvé');
+    }
+  }
+  
 
   // async resetPassword(email: string, newPassword: string, isCrmUser: boolean) {
   //   const hashedPassword = await bcrypt.hash(newPassword, 10);
