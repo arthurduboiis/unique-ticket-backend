@@ -6,6 +6,10 @@ import {
   MinLength,
 } from 'class-validator';
 
+/**
+ * Data Transfer Object (DTO) for user connexion.
+ * This class is used to validate the data provided during user login.
+ */
 export class ConnexionDto {
   @IsString()
   @IsNotEmpty({ message: 'Email obligatoire.' })
