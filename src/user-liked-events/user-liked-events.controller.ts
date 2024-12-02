@@ -16,4 +16,21 @@ export class UserLikedEventsController {
   constructor(
     private readonly userLikedEventsService: UserLikedEventsService
   ) {}
+
+  @Post()
+  create(@Body() createUserLikedEventDto: CreateUserLikedEventDto) {
+    const { userId, eventId } = createUserLikedEventDto;
+    return this.userLikedEventsService.addLikedEvent(userId, eventId);
+  }
+
+  @Post('remove')
+  remove(@Body() createUserLikedEventDto: CreateUserLikedEventDto) {
+    const { userId, eventId } = createUserLikedEventDto;
+    return this.userLikedEventsService.removeLikedEvent(userId, eventId);
+  }
+
+  @Get(':userId')
+  findAll(@Param('userId') userId: string) {
+    return this.userLikedEventsService.getLikedEventsForUser(+userId);
+  }
 }

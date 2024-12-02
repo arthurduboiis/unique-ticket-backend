@@ -18,4 +18,11 @@ export class UserLikedEventsService {
   async removeLikedEvent(userId: number, eventId: number): Promise<void> {
     await this.userLikedEventRepository.delete({ user: { id: userId }, event: { id: eventId } });
   }
+
+  async getLikedEventsForUser(userId: number): Promise<UserLikedEvent[]> {
+    return this.userLikedEventRepository.find({
+      where: { user: { id: userId } },
+      relations: ['event'],
+    });
+  }
 }

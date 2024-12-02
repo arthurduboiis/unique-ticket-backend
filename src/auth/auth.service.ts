@@ -38,6 +38,7 @@ export class AuthService {
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
+      user: user,
     };
   }
 
@@ -66,7 +67,7 @@ export class AuthService {
     }
   }
 
-  async refreshToken(refreshToken: string): Promise<{ access_token: string }> {
+  async refreshToken(refreshToken: string): Promise<any> {
     try {
       // Vérifie la validité du Refresh Token
       const decoded = this.jwtService.verify(refreshToken);
@@ -78,7 +79,7 @@ export class AuthService {
 
       // Génère un nouveau Access Token
       const accessToken = this.generateAccessToken(user);
-      return { access_token: accessToken };
+      return { access_token: accessToken, user: user };
     } catch (error) {
       throw new UnauthorizedException('Refresh token invalide ou expiré');
     }
@@ -86,9 +87,7 @@ export class AuthService {
 
   async updatePassword(user: any, oldPassword: string, newPassword: string, confirmPassword: string): Promise<string | null> {
     const userToCheck = await this.usersService.findOneByEmail(user.email);
-    console.log(userToCheck);
-    console.log("OLD",oldPassword);
-    console.log(newPassword);
+
     if (userToCheck && (await bcrypt.compare(oldPassword, userToCheck.password))) {  
       return this.usersService.changePassword(userToCheck.id, oldPassword, newPassword, confirmPassword);
     } else {

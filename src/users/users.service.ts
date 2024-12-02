@@ -43,7 +43,7 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string): Promise<User> {
-    return this.userRepository.findOne({ where: { email } });
+    return this.userRepository.findOne({ where: { email }, relations: ['liked', 'following'] });
   }
 
   // Mettre à jour un utilisateur
